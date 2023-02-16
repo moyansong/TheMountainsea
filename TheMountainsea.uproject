@@ -1,0 +1,42 @@
+{
+	"FileVersion": 3,
+	"EngineAssociation": "{7C016AFE-4891-CFF9-FB9A-82B57D4E64FE}",
+	"Category": "",
+	"Description": "",
+	"Modules": [
+		{
+			"Name": "TheMountainsea",
+			"Type": "Runtime",
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine",
+				"UMG",
+				"GameplayAbilities",
+				"SimpleCombat",
+				"AIModule"
+			]
+		}
+	],
+	"Plugins": [
+		{
+			"Name": "ModelingToolsEditorMode",
+			"Enabled": true,
+			"TargetAllowList": [
+				"Editor"
+			]
+		},
+		{
+			"Name": "GameplayAbilities",
+			"Enabled": true
+		},
+		{
+			"Name": "SimpleCombat",
+			"Enabled": true
+		},
+		{
+			"Name": "SimpleDrawText",
+			"Enabled": true,
+			"MarketplaceURL": "https://renzhai.net/150.html"
+		}
+	]
+}
