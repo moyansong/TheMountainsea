@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Abilities/GameplayAbilityTypes.h"
+#include "SimpleCombatTypes.h"
 #include "TheMountainseaTypes.generated.h"
 
 class AActor;

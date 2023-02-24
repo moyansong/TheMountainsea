@@ -70,6 +70,12 @@ FName UCombatComponent::GetActiveSkill()
 	return NAME_None;
 }
 
+void UCombatComponent::SetActiveSkill(const FName& SkillName)
+{
+	LastActiveSkill = ActiveSkill;
+	ActiveSkill = SkillName;
+}
+
 void UCombatComponent::ServerSetCharacterCombatState_Implementation(ECharacterCombatState State)
 {
 	SetCharacterCombatState(State);
@@ -97,19 +103,9 @@ void UCombatComponent::OnCharacterCombatStateSet()
 
 void UCombatComponent::ActivateSkill(const FName& SkillName)
 {
-	if (HasAuthority())
+	if (MyAbilitySystemComponent.IsValid())
 	{
-		if (MyAbilitySystemComponent.IsValid())
-		{
-			if (MyAbilitySystemComponent->ActivateSkill(SkillName))
-			{
-				ActiveSkill = SkillName;
-			}
-		}
-	}
-	else
-	{
-		ServerActivateSkill(SkillName);
+		MyAbilitySystemComponent->ActivateSkill(SkillName);
 	}
 }
 
@@ -125,50 +121,29 @@ void UCombatComponent::Dodge()
 
 void UCombatComponent::ComboPressed(const FName& ComboName)
 {
-	if (HasAuthority())
+	if (FSimpleComboCheck* ComboCheck = GetSimpleComboInfo(ComboName))
 	{
-		if (FSimpleComboCheck* ComboCheck = GetSimpleComboInfo(ComboName))
-		{
-			ComboCheck->Pressed();
-		}
-	}
-	else
-	{
-		ServerComboPressed(ComboName);
+		ComboCheck->Pressed();
 	}
 }
 
 void UCombatComponent::ComboReleased(const FName& ComboName)
 {
-	if (HasAuthority())
+	if (FSimpleComboCheck* ComboCheck = GetSimpleComboInfo(ComboName))
 	{
-		if (FSimpleComboCheck* ComboCheck = GetSimpleComboInfo(ComboName))
+		ComboCheck->Released();
+		if (GetActiveSkill() != ComboName)
 		{
-			ComboCheck->Released();
-			if (GetActiveSkill() != ComboName)
-			{
-				ComboCheck->Reset();
-			}
+			ComboCheck->Reset();
 		}
-	}
-	else
-	{
-		ServerComboReleased(ComboName);
 	}
 }
 
 void UCombatComponent::ComboReset(const FName& ComboName)
 {
-	if (HasAuthority())
+	if (FSimpleComboCheck* ComboCheck = GetSimpleComboInfo(ComboName))
 	{
-		if (FSimpleComboCheck* ComboCheck = GetSimpleComboInfo(ComboName))
-		{
-			ComboCheck->Reset();
-		}
-	}
-	else
-	{
-		ServerComboReset(ComboName);
+		ComboCheck->Reset();
 	}
 }
 
@@ -199,7 +174,7 @@ void UCombatComponent::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
 	if (MyPlayerController.IsValid() && IsLocallyControlled())
 	{
-		MyPlayerController->SetUIHealth(Data.OldValue); 
+		MyPlayerController->SetUIHealth(Data.OldValue);
 	}
 }
 

@@ -32,10 +32,6 @@ void UAnimNotifyState_CheckCombo::NotifyEnd(USkeletalMeshComponent* MeshComp, UA
 	{
 		if (FSimpleComboCheck* ComboCheck = MyCharacter->GetSimpleComboInfo(ComboName))
 		{
-			/*if (ComboCheck->bShortPressed || ComboCheck->bLongPressed)
-			{
-				MyCharacter->ComboAttack(ComboName);
-			}*/
 			if (ComboCheck->bShortPressed)
 			{
 				MyCharacter->ComboShortPressed(ComboName);

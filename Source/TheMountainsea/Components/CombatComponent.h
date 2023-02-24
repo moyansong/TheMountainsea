@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "MyActorComponent.h"
 #include "../Characters/CharacterTypes.h"
+#include "GameplayEffectTypes.h"
+#include "../TheMountainseaTypes.h"
 #include "SimpleCombatTypes.h"
 #include "CombatComponent.generated.h"
 
@@ -22,8 +24,8 @@ public:
 	friend class APlayerCharacter;
 
 	UCombatComponent();
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 //------------------------------------------Set && Get---------------------------------------------------------
 	void SetCharacterCombatState(ECharacterCombatState State);
@@ -33,7 +35,11 @@ public:
 
 	FSimpleComboCheck* GetSimpleComboInfo(const FName& ComboName);
 
-	FORCEINLINE FName GetActiveSkill();
+	FName GetActiveSkill();
+	void SetActiveSkill(const FName& SkillName);
+
+	FORCEINLINE FName GetLastActiveSkill() const { return LastActiveSkill; }
+	void SetLastActiveSkill(const FName& SkillName) { LastActiveSkill = SkillName; }
 
 //------------------------------------------Functions---------------------------------------------------------
 	UFUNCTION()
@@ -97,6 +103,7 @@ private:
 
 	// 仅在释放时设置，在技能结束后不会重置，请使用GetAvtiveSkill
 	FName ActiveSkill = NAME_None;
+	FName LastActiveSkill = NAME_None;
 
 	// 显示伤害数字的类
 	UPROPERTY(EditAnywhere, Category = UI)

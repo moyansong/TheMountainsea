@@ -7,6 +7,7 @@
 #include "MyPlayerController.generated.h"
 
 class AMyHUD;
+class APawn;
 class AMyCharacter;
 class APlayerCharacter;
 
@@ -22,11 +23,15 @@ public:
 	AMyPlayerController();
 	virtual void Tick(float DeltaTime) override;
 
+	// 本地调用
+	virtual void AcknowledgePossession(APawn* P) override;
+
+	// 服务器调用
+	virtual void AcknowledgePossession(APlayerCharacter* NewCharacter);
 //------------------------------------------Set && Get---------------------------------------------------------	
 	FORCEINLINE AMyCharacter* GetTargetCharacter() const { return TargetCharacter.IsValid() ? TargetCharacter.Get() : nullptr; }
 
 //------------------------------------------Functions---------------------------------------------------------
-	virtual void Init();
 
 protected:
 	virtual void BeginPlay() override;

@@ -71,41 +71,46 @@ void UMyGameplayAbility::OnGameplayEvent(FGameplayTag EventTag, FGameplayEventDa
 
 void UMyGameplayAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	// ActiveAbility最好完全重载，不要调父类的
 	// Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
-	if (bHasBlueprintActivate)
-	{
-		// A Blueprinted ActivateAbility function must call CommitAbility somewhere in its execution chain.
-		K2_ActivateAbility();
-	}
-	else if (bHasBlueprintActivateFromEvent)
-	{
-		if (TriggerEventData)
-		{
-			// A Blueprinted ActivateAbility function must call CommitAbility somewhere in its execution chain.
-			K2_ActivateAbilityFromEvent(*TriggerEventData);
-		}
-		else
-		{
-			UE_LOG(LogAbilitySystem, Warning, TEXT("Ability %s expects event data but none is being supplied. Use Activate Ability instead of Activate Ability From Event."), *GetName());
-			bool bReplicateEndAbility = false;
-			bool bWasCancelled = true;
-			EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-		}
-	}// 这些都是蓝图逻辑
-	else
-	{
-		if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
-		{
-			return;
-		}
+	//if (bHasBlueprintActivate)
+	//{
+	//	// A Blueprinted ActivateAbility function must call CommitAbility somewhere in its execution chain.
+	//	K2_ActivateAbility();
+	//}
+	//else if (bHasBlueprintActivateFromEvent)
+	//{
+	//	if (TriggerEventData)
+	//	{
+	//		// A Blueprinted ActivateAbility function must call CommitAbility somewhere in its execution chain.
+	//		K2_ActivateAbilityFromEvent(*TriggerEventData);
+	//	}
+	//	else
+	//	{
+	//		UE_LOG(LogAbilitySystem, Warning, TEXT("Ability %s expects event data but none is being supplied. Use Activate Ability instead of Activate Ability From Event."), *GetName());
+	//		bool bReplicateEndAbility = false;
+	//		bool bWasCancelled = true;
+	//		EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+	//	}
+	//}// 这些都是蓝图逻辑
+	//else
+	//{
+	//	if (!CommitAbility(Handle, ActorInfo, ActivationInfo))
+	//	{
+	//		return;
+	//	}
 
-		AMyCharacter* MyCharacter = Cast<AMyCharacter>(ActorInfo->OwnerActor);
-		if (MyCharacter)
-		{
-			PlayMontage();
-		}
+	//	AMyCharacter* MyCharacter = Cast<AMyCharacter>(ActorInfo->OwnerActor);
+	//	if (MyCharacter)
+	//	{
+	//		PlayMontage(); 
+	//	}
+	//}
+
+	AMyCharacter* MyCharacter = Cast<AMyCharacter>(ActorInfo->OwnerActor);
+	if (MyCharacter && MyCharacter->GetCombatComponent())
+	{
+		MyCharacter->GetCombatComponent()->SetActiveSkill(AbilityName);
 	}
 }
 

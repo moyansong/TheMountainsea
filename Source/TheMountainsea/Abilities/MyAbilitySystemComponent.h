@@ -20,6 +20,7 @@ class THEMOUNTAINSEA_API UMyAbilitySystemComponent : public UAbilitySystemCompon
 public:
 	friend class AMyCharacter;
 	UMyAbilitySystemComponent();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 //------------------------------------------Set && Get---------------------------------------------------------
 	UMyGameplayAbility* GetAbility(const FName& AbilityName);
 	
@@ -33,11 +34,15 @@ public:
 //------------------------------------------Functions---------------------------------------------------------
 	void InitAbility();
 
+	void LocalInitAbility();
+
 	void AddAbility(TSubclassOf<UGameplayAbility> NewAbilityClass);
 
 	bool ActivateSkill(FName SkillName);
 
 	static UMyAbilitySystemComponent* GetAbilitySystemComponentFromActor(const AActor* Actor, bool LookForComponent = false);
+
+	virtual void OnRep_ActivateAbilities() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -53,9 +58,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = Abilities)
 	TArray<TSubclassOf<UMyGameplayAbility>> AbilityClasses;
 
-	// 存储所有技能，包括Combo
+	// 存储所有技能，包括Combo，在主控端和服务器都有
 	TMap<FName, FGameplayAbilitySpecHandle> Skills;
 
-	// 存储FSimpleComboCheck
+	// 存储FSimpleComboCheck，在主控端和服务器都有
 	TMap<FName, FSimpleComboCheck> ComboChecks;
 };

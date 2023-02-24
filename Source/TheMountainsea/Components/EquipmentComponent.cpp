@@ -3,6 +3,7 @@
 
 #include "EquipmentComponent.h"
 #include "../Characters/MyCharacter.h"
+#include "../Items/Weapons/Weapon.h"
 
 UEquipmentComponent::UEquipmentComponent()
 {

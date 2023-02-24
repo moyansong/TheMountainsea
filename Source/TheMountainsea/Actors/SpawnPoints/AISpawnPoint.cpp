@@ -20,7 +20,7 @@ void AAISpawnPoint::BeginPlay()
 
 void AAISpawnPoint::SpawnAICharacter(int32 CharacterID, int32 Level)
 {
-	if (GetWorld() && GetWorld()->IsServer())
+	if (GetWorld() && GetWorld()->IsNetMode(ENetMode::NM_ListenServer))
 	{
 
 	}

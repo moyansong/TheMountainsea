@@ -3,12 +3,20 @@
 
 #include "MyAbilitySystemComponent.h"
 #include "AbilitySystemGlobals.h"
+#include "Net/UnrealNetwork.h"
 #include "MyGameplayAbility.h"
+#include "../TheMountainsea.h"
 #include "../Characters/MyCharacter.h"
 #include "../Game/GameStates/MyGameState.h"
 
 UMyAbilitySystemComponent::UMyAbilitySystemComponent()
 {
+}
+
+void UMyAbilitySystemComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
 }
 
 void UMyAbilitySystemComponent::BeginPlay()
@@ -37,10 +45,25 @@ void UMyAbilitySystemComponent::InitAbility()
 	}
 }
 
+void UMyAbilitySystemComponent::LocalInitAbility()
+{
+	for (auto& Spec : ActivatableAbilities.Items)
+	{
+		if (UMyGameplayAbility* Ability = Cast<UMyGameplayAbility>(Spec.Ability))
+		{
+			Skills.Add(Ability->GetAbilityName(), Spec.Handle);
+			if (Ability->IsComboAttack())
+			{
+				RegisterComboAttack(Ability->GetAbilityName());
+			}
+		}
+	}
+}
+
 void UMyAbilitySystemComponent::AddAbility(TSubclassOf<UGameplayAbility> NewAbilityClass)
 {
 	if (!NewAbilityClass) return;
-
+	
 	FGameplayAbilitySpecHandle Handle = GiveAbility(FGameplayAbilitySpec(NewAbilityClass));
 	if (UMyGameplayAbility* Ability = Cast<UMyGameplayAbility>(NewAbilityClass->GetDefaultObject()))
 	{
@@ -62,6 +85,12 @@ void UMyAbilitySystemComponent::RegisterComboAttack(const FName& ComboName)
 	ComboCheck.MaxIndex = Ability ? Ability->GetCompositeSectionsNumber() : 4;
 
 	ComboChecks.Add(ComboName, ComboCheck);
+}
+
+void UMyAbilitySystemComponent::OnRep_ActivateAbilities()
+{
+	Super::OnRep_ActivateAbilities();
+	
 }
 
 UMyGameplayAbility* UMyAbilitySystemComponent::GetAbility(const FName& AbilityName)

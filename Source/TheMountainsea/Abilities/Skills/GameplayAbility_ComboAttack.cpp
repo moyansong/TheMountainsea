@@ -2,15 +2,17 @@
 
 
 #include "GameplayAbility_ComboAttack.h"
+#include "../../TheMountainsea.h"
 #include "../../Characters/MyCharacter.h"
 
 void UGameplayAbility_ComboAttack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
-	//Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	if (!CommitAbility(Handle, ActorInfo, ActivationInfo)) return;
-
-	if (AMyCharacter* MyCharacter = Cast<AMyCharacter>(ActorInfo->OwnerActor))
+	
+	AMyCharacter* MyCharacter = Cast<AMyCharacter>(ActorInfo->OwnerActor);
+	if (MyCharacter && MyCharacter->GetCombatComponent())
 	{
 		if (FSimpleComboCheck* ComboAttack = MyCharacter->GetSimpleComboInfo(AbilityName))
 		{
@@ -28,7 +30,7 @@ void UGameplayAbility_ComboAttack::CancelAbility(const FGameplayAbilitySpecHandl
 	{
 		if (FSimpleComboCheck* ComboAttack = MyCharacter->GetSimpleComboInfo(AbilityName))
 		{
-			ComboAttack->Reset();
+			ComboAttack->Reset(); 
 		}
 	}
 }

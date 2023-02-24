@@ -23,3 +23,12 @@ void UMyActorComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	if (!MyCharacter.IsValid()) MyCharacter = Cast<AMyCharacter>(GetOwner());
 }
 
+bool UMyActorComponent::HasAuthority() const
+{
+	return MyCharacter.IsValid() && MyCharacter->HasAuthority();
+}
+
+bool UMyActorComponent::IsLocallyControlled() const
+{
+	return MyCharacter.IsValid() && MyCharacter->IsLocallyControlled();
+}

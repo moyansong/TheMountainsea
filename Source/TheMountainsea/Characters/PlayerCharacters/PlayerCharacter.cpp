@@ -10,6 +10,7 @@
 #include "../../Components/CombatComponent.h"
 #include "../../Components/MotionComponent.h"
 #include "../../Components/EquipmentComponent.h"
+#include "../../Abilities/MyAbilitySystemComponent.h"
 #include "../../Game/PlayerControllers/UIPlayerController.h"
 
 APlayerCharacter::APlayerCharacter()
@@ -29,42 +30,10 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera->bUsePawnControlRotation = false;
 }
 
-void APlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
 void APlayerCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-void APlayerCharacter::Init()
-{
-	Super::Init();
-
-	if (!MyController.IsValid() && (IsLocallyControlled() || HasAuthority()))
-	{
-		MyController = Cast<AUIPlayerController>(Controller);
-		if (MyController.IsValid())
-		{
-			MyController->SetUIMana();
-			MyController->SetUIHealth();
-			if (GetCombatComponent())
-			{
-				GetCombatComponent()->MyPlayerController = MyController;
-			}
-			if (GetMotionComponent())
-			{
-				GetMotionComponent()->MyPlayerController = MyController;
-			}
-			if (GetEquipmentComponent())
-			{
-				GetEquipmentComponent()->MyPlayerController = MyController;
-			}
-		}
-	}
 }
 
 void APlayerCharacter::PostInitializeComponents()
@@ -79,6 +48,51 @@ void APlayerCharacter::PostInitializeComponents()
 	{
 		GetMotionComponent()->MyPlayerCharacter = this;
 		GetMotionComponent()->MyFollowCamera = FollowCamera;
+	}
+}
+
+void APlayerCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+	if (AUIPlayerController* PlayerController = Cast<AUIPlayerController>(NewController))
+	{
+		PlayerController->AcknowledgePossession(this);
+		PossessedBy(PlayerController);
+	}
+}
+
+void APlayerCharacter::PossessedBy(AUIPlayerController* NewController)
+{
+	MyController = NewController;
+	if (MyController.IsValid())
+	{
+		if (GetCombatComponent())
+		{
+			GetCombatComponent()->MyPlayerController = MyController;
+		}
+		if (GetMotionComponent())
+		{
+			GetMotionComponent()->MyPlayerController = MyController;
+		}
+		if (GetEquipmentComponent())
+		{
+			GetEquipmentComponent()->MyPlayerController = MyController;
+		}
+	}
+}
+
+void APlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetLocalRole() == ENetRole::ROLE_AutonomousProxy)
+	{
+		if (GetMyAbilitySystemComponent())
+		{
+			GetMyAbilitySystemComponent()->InitAbilityActorInfo(this, this);
+			GetMyAbilitySystemComponent()->LocalInitAbility();
+		}
 	}
 }
 
@@ -105,7 +119,7 @@ void APlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 void APlayerCharacter::Test()
 {
-	
+
 }
 
 void APlayerCharacter::MoveForward(float Value)
@@ -208,7 +222,7 @@ void APlayerCharacter::AnimSignal(EAnimSignalType AnimSignalType)
 
 	if (AnimSignalType == EAnimSignalType::EAST_ComboReset)
 	{
-		if (HasAuthority() && GetCombatComponent())
+		if ((IsLocallyControlled() || HasAuthority()) && GetCombatComponent())
 		{
 			GetCombatComponent()->ComboReset(GetCombatComponent()->GetActiveSkill());
 		}
@@ -247,4 +261,20 @@ void APlayerCharacter::MouseRightClickStop()
 
 }
 
+void APlayerCharacter::ComboShortPressed(const FName& ComboName)
+{
+	if (IsLocallyControlled())
+	{
+		ActivateSkill(ComboName);
+	}
+}
+
+void APlayerCharacter::ComboLongPressed(const FName& ComboName)
+{
+	if (IsLocallyControlled())
+	{
+		FString ComboName_Heavy = ComboName.ToString().Append((TEXT("_Heavy")));
+		ActivateSkill(FName(*ComboName_Heavy));
+	}
+}
 

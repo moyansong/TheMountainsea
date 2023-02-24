@@ -16,6 +16,7 @@ public:
 	APlayerCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 //------------------------------------------Set && Get---------------------------------------------------------
 	FORCEINLINE virtual USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
@@ -25,6 +26,9 @@ public:
 	FORCEINLINE void SetOverlappingActor(AActor* Actor) { OverlappingActor = Actor; }
 
 //--------------------------------------------Functions---------------------------------------------------------
+	// 在服务器和本地都会调用
+	virtual void PossessedBy(AUIPlayerController* NewController);
+	
 	virtual void AnimSignal(EAnimSignalType AnimSignalType) override;
 
 	virtual void Fly() override;
@@ -34,9 +38,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	void Init() override;
-
 	virtual void Die() override;
+
+	virtual void ComboShortPressed(const FName& ComboName) override;
+	virtual void ComboLongPressed(const FName& ComboName) override;
 //----------------------------------------------RPC-----------------------------------------------------------
 
 

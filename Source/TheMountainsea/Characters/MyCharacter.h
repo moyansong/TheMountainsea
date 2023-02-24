@@ -45,16 +45,17 @@ public:
 	AMyCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
+	virtual void PossessedBy(AController* NewController) override;// 只在服务器调用
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 //------------------------------------------Set && Get---------------------------------------------------------
 	virtual USpringArmComponent* GetCameraBoom() const { return nullptr; }
 	virtual UCameraComponent* GetFollowCamera() const { return nullptr; }
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const;
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	FORCEINLINE UMyAttributeSet* GetAttributeSet() const { return MyAttributeSet; }
 	FORCEINLINE UCombatComponent* GetCombatComponent() const { return CombatComponent; }
 	FORCEINLINE UMotionComponent* GetMotionComponent() const { return MotionComponent; }
 	FORCEINLINE UEquipmentComponent* GetEquipmentComponent() const { return EquipmentComponent; }
-	//FORCEINLINE UMyAbilitySystemComponent* GetAbilitySystemComponent() const { return AbilitySystemComponent; }
+	FORCEINLINE UMyAbilitySystemComponent* GetMyAbilitySystemComponent() const { return AbilitySystemComponent; }
 	FORCEINLINE UOverheadWidgetComponent* GetOverheadWidgetComponent() const { return OverheadWidgetComponent; }
 	
 	void SetCharacterState(ECharacterState State);
@@ -91,6 +92,9 @@ public:
 
 	FGameplayTag GetSkillTag(const FName& SkillName) const ;
 
+	FName GetActiveSkill() const;
+	FName GetLastActiveSkill() const;
+
 //------------------------------------------Functions---------------------------------------------------------
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
@@ -105,7 +109,7 @@ public:
 
 	void AddAbility(TSubclassOf<UGameplayAbility> NewAbilityClass);
 
-	// 在服务器和本地都会调用
+	// 在所有端都会调用
 	virtual void ComboShortPressed(const FName& ComboName) override;
 	virtual void ComboLongPressed(const FName& ComboName) override;
 
@@ -125,9 +129,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	// 在Tick里进行，多用于第一次获取某个变量时执行某些事件
-	virtual void Init();
 
 	virtual void Die();
 

@@ -19,13 +19,13 @@ class THEMOUNTAINSEA_API AUIPlayerController : public AMyPlayerController
 public:
 	AUIPlayerController();
 	virtual void Tick(float DeltaTime) override;
-
+	virtual void AcknowledgePossession(class APawn* P) override;
+	virtual void AcknowledgePossession(APlayerCharacter* NewCharacter) override;
 //------------------------------------------Set && Get---------------------------------------------------------
 	void SetUIMana(float OldMana = 0.f);
 	void SetUIHealth(float OldHealth = 0.f);
 
 //------------------------------------------Functions---------------------------------------------------------
-	virtual void Init() override;
 
 protected:
 	virtual void BeginPlay() override;

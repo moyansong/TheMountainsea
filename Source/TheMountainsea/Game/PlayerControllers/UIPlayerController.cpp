@@ -18,27 +18,35 @@ void AUIPlayerController::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void AUIPlayerController::BeginPlay()
+void AUIPlayerController::AcknowledgePossession(APawn* P)
 {
-	Super::BeginPlay();
-}
-
-void AUIPlayerController::Init()
-{
-	Super::Init();
+	Super::AcknowledgePossession(P);
 
 	if (MyPlayerCharacter.IsValid())
 	{
-		if (!MyAttributeSet.IsValid())
+		MyPlayerCharacter->PossessedBy(this);
+		MyAttributeSet = MyPlayerCharacter->GetAttributeSet();
+		if (MyAttributeSet.IsValid())
 		{
-			MyAttributeSet = MyPlayerCharacter->GetAttributeSet();
-			if (MyAttributeSet.IsValid())
-			{
-				SetUIMana();
-				SetUIHealth();
-			}
+			SetUIMana();
+			SetUIHealth();
 		}
 	}
+}
+
+void AUIPlayerController::AcknowledgePossession(APlayerCharacter* NewCharacter)
+{
+	Super::AcknowledgePossession(NewCharacter);
+
+	if (MyPlayerCharacter.IsValid())
+	{
+		MyAttributeSet = MyPlayerCharacter->GetAttributeSet();
+	}
+}
+
+void AUIPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void AUIPlayerController::SetUIMana(float OldMana)

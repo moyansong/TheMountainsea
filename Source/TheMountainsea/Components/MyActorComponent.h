@@ -32,10 +32,10 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Category = Networking)
-	FORCEINLINE bool HasAuthority() const { return MyCharacter.IsValid() && MyCharacter->HasAuthority(); }
+	bool HasAuthority() const;
 
 	UFUNCTION(BlueprintCallable, Category = Networking)
-	FORCEINLINE bool IsLocallyControlled() const { return MyCharacter.IsValid() && MyCharacter->IsLocallyControlled(); }
+	bool IsLocallyControlled() const;
 
 //-------------------------------------------Parameters---------------------------------------------------------
 	UPROPERTY()

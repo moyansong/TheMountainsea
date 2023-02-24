@@ -67,8 +67,7 @@ AMyCharacter::AMyCharacter()
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
-	Init();
+
 }
 
 void AMyCharacter::PostInitializeComponents()
@@ -98,6 +97,12 @@ void AMyCharacter::PostInitializeComponents()
 	{
 		OverheadWidgetComponent->MyCharacter = this;
 	}
+}
+
+void AMyCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController); 
+	
 }
 
 void AMyCharacter::BeginPlay()
@@ -136,10 +141,6 @@ void AMyCharacter::BeginPlay()
 	{
 		MyAttributeSet->InitAttribute();
 	}
-}
-
-void AMyCharacter::Init()
-{
 }
 
 void AMyCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -310,6 +311,21 @@ void AMyCharacter::AddAbility(TSubclassOf<UGameplayAbility> NewAbilityClass)
 	}
 }
 
+FGameplayTag AMyCharacter::GetSkillTag(const FName& SkillName) const
+{
+	return AbilitySystemComponent ? AbilitySystemComponent->GetSkillTag(SkillName) : FGameplayTag();
+}
+
+FName AMyCharacter::GetActiveSkill() const
+{
+	return CombatComponent ? CombatComponent->GetActiveSkill() : FName();
+}
+
+FName AMyCharacter::GetLastActiveSkill() const
+{
+	return CombatComponent ? CombatComponent->GetLastActiveSkill() : FName();
+}
+
 void AMyCharacter::ActivateSkill(const FName& SkillName)
 {
 	if (CombatComponent)
@@ -320,18 +336,12 @@ void AMyCharacter::ActivateSkill(const FName& SkillName)
 
 void AMyCharacter::ComboShortPressed(const FName& ComboName)
 {
-	if (HasAuthority())
-	{
-		ActivateSkill(ComboName);
-	}
+	ActivateSkill(ComboName);
 }
 
 void AMyCharacter::ComboLongPressed(const FName& ComboName)
 {
-	if (HasAuthority())
-	{
-		ActivateSkill(ComboName);
-	}
+	ActivateSkill(ComboName);
 }
 
 void AMyCharacter::Fly()
@@ -383,11 +393,6 @@ bool AMyCharacter::IsAlive() const
 FHitData AMyCharacter::GetHitData() const
 {
 	return CombatComponent ? CombatComponent->MyHitData : FHitData();
-}
-
-FGameplayTag AMyCharacter::GetSkillTag(const FName& SkillName) const
-{
-	return AbilitySystemComponent ? AbilitySystemComponent->GetSkillTag(SkillName) : FGameplayTag();
 }
 
 void AMyCharacter::Die()
