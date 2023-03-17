@@ -75,10 +75,11 @@ public:
 
 	float GetOldValue(float Value, float Magnitude, EGameplayModOp::Type ModOp);
 	
-	// 属性修改前调用的函数，更多是是用来更改最大值的，例如NewValue = NewMaxHealth，然后把Health等比例放大
+	// 属性修改前调用的函数
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 
 	// 属性改变后要做的工作，例如改变UI等，只在Server发生,这个函数结束后变量会复制到客户端
+	// 仅在受到Instant类的GE时触发，ASC中的回调任何类型的GE都能触发
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
 	/** 此函数用于在属性的关联最大属性更改时按比例调整属性的值。（即，当MaxHealth增加时，Health增加的百分比与之前相同) */

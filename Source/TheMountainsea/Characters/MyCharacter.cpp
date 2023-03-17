@@ -46,9 +46,6 @@ AMyCharacter::AMyCharacter()
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Overlap);
 	GetMesh()->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
 
-	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
-	CombatComponent->SetIsReplicated(true);
-
 	MotionComponent = CreateDefaultSubobject<UMotionComponent>(TEXT("MotionComponent"));
 	MotionComponent->SetIsReplicated(true);
 
@@ -61,13 +58,14 @@ AMyCharacter::AMyCharacter()
 	AbilitySystemComponent = CreateDefaultSubobject<UMyAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 
+	// 在OwnerActor的构造方法中创建的AttributeSet会自动注册到ASC
 	MyAttributeSet = CreateDefaultSubobject<UMyAttributeSet>(TEXT("AttributeSet"));
 }
 
 void AMyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 }
 
 void AMyCharacter::PostInitializeComponents()

@@ -164,18 +164,12 @@ void UCombatComponent::ServerComboReset_Implementation(const FName& ComboName)
 
 void UCombatComponent::OnManaChanged(const FOnAttributeChangeData& Data)
 {
-	if (MyPlayerController.IsValid() && IsLocallyControlled())
-	{
-		MyPlayerController->SetUIMana(Data.OldValue);
-	}
+	
 }
 
 void UCombatComponent::OnHealthChanged(const FOnAttributeChangeData& Data)
 {
-	if (MyPlayerController.IsValid() && IsLocallyControlled())
-	{
-		MyPlayerController->SetUIHealth(Data.OldValue);
-	}
+	
 }
 
 void UCombatComponent::OnDamageChanged(const FOnAttributeChangeData& Data)

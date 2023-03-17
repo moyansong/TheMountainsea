@@ -3,6 +3,7 @@
 
 #include "AICharacter.h"
 #include "../../AI/AIControllers/MyAIController.h"
+#include "../../Components/CombatComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 AAICharacter::AAICharacter()
@@ -13,6 +14,9 @@ AAICharacter::AAICharacter()
 	bUseControllerRotationYaw = true;
 
 	GetCharacterMovement()->bUseControllerDesiredRotation = true;
+
+	CombatComponent = CreateDefaultSubobject<UCombatComponent>(TEXT("CombatComponent"));
+	CombatComponent->SetIsReplicated(true);
 }
 
 void AAICharacter::BeginPlay()

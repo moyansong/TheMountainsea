@@ -154,7 +154,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Abilities)
 	TObjectPtr<UMyAttributeSet> MyAttributeSet;
 
-private:	
+protected:	
 //-----------------------------------------Components---------------------------------------------------------
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Component)
 	TObjectPtr<UCombatComponent> CombatComponent;

@@ -10,6 +10,7 @@
 #include "../../Components/CombatComponent.h"
 #include "../../Components/MotionComponent.h"
 #include "../../Components/EquipmentComponent.h"
+#include "../../Components/PlayerCombatComponent.h"
 #include "../../Abilities/MyAbilitySystemComponent.h"
 #include "../../Game/PlayerControllers/UIPlayerController.h"
 
@@ -28,6 +29,10 @@ APlayerCharacter::APlayerCharacter()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
+
+	CombatComponent = CreateDefaultSubobject<UPlayerCombatComponent>(TEXT("CombatComponent"));
+	CombatComponent->SetIsReplicated(true);
+	PlayerCombatComponent = Cast<UPlayerCombatComponent>(CombatComponent);
 }
 
 void APlayerCharacter::Tick(float DeltaTime)

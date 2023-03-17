@@ -7,6 +7,7 @@
 #include "PlayerCharacter.generated.h"
 
 class AUIPlayerController;
+class UPlayerCombatComponent;
 
 UCLASS()
 class THEMOUNTAINSEA_API APlayerCharacter : public AMyCharacter
@@ -21,7 +22,8 @@ public:
 //------------------------------------------Set && Get---------------------------------------------------------
 	FORCEINLINE virtual USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	FORCEINLINE virtual UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-	
+	FORCEINLINE UPlayerCombatComponent* GetPlayerCombatComponent() const { return PlayerCombatComponent.Get(); }
+
 	FORCEINLINE AActor* GetOverlappingActor() { return OverlappingActor; }
 	FORCEINLINE void SetOverlappingActor(AActor* Actor) { OverlappingActor = Actor; }
 
@@ -109,4 +111,7 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Camera)
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+	UPROPERTY()
+	TWeakObjectPtr<UPlayerCombatComponent> PlayerCombatComponent;
 };
